@@ -1,0 +1,39 @@
+name: Release APK
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [ccr-da98ee23-adm9dj]
+
+jobs:
+  apk:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+      - run: npm ci
+      - name: Install NDK
+        run: yes | "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" "ndk;27.1.12297006" > /dev/null
+      # Signed with the project's debug keystore (see android/app/build.gradle), which is fine
+      # for installing on your own phone but not for Play Store distribution.
+      - name: Build release APK (phones: arm64 + 32-bit arm)
+        working-directory: android
+        run: ./gradlew assembleRelease --no-daemon -PreactNativeArchitectures=arm64-v8a,armeabi-v7a
+      - name: Check the APK has no INTERNET permission
+        run: |
+          AAPT=$(ls "$ANDROID_HOME"/build-tools/*/aapt | sort -V | tail -1)
+          "$AAPT" dump permissions android/app/build/outputs/apk/release/app-release.apk | tee perms.txt
+          ! grep -q "android.permission.INTERNET" perms.txt
+      - name: Rename
+        run: cp android/app/build/outputs/apk/release/app-release.apk ReelCounter-release.apk
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ReelCounter-release-apk
+          path: ReelCounter-release.apk
