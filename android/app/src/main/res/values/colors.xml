@@ -1,0 +1,8 @@
+<resources>
+    <color name="overlay_counter_bg">#E6202124</color>
+    <color name="overlay_counter_text">#FFFFFFFF</color>
+    <color name="block_bg">#F2101418</color>
+    <color name="block_text">#FFFFFFFF</color>
+    <color name="block_text_secondary">#CCFFFFFF</color>
+    <color name="block_primary">#FF4F8CFF</color>
+</resources>

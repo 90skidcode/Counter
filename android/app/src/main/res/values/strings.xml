@@ -1,0 +1,45 @@
+<resources>
+    <string name="app_name">Reel Counter</string>
+
+    <!-- Accessibility service: shown in Android Settings. Must describe the real purpose. -->
+    <string name="accessibility_service_label">Reel Counter short-video detection</string>
+    <string name="accessibility_service_description">Reel Counter is not an assistive accessibility tool. It uses this service, only if you turn it on, to: (1) infer when you move to a new short video in the apps you choose to monitor (YouTube, Instagram, Facebook, TikTok) by reading scroll positions of their video feed; (2) read the address bar of Brave or Chrome to recognise short-video pages and blocked websites; and (3) show the floating counter and the block screen on top of other apps. It does not read messages, passwords, video titles or page contents, does not store what it reads, never sends data off your device, and never taps or scrolls for you. You can turn it off here at any time.</string>
+
+    <!-- Notifications -->
+    <string name="channel_limits_name">Limits and milestones</string>
+    <string name="channel_limits_description">Warnings when you reach the short-video milestones and limits you set.</string>
+    <string name="scope_all_platforms">all platforms</string>
+    <string name="warning_title_milestone">Short-video milestone</string>
+    <string name="warning_title_approaching">Approaching your limit (%1$s)</string>
+    <string name="warning_title_reached">Limit reached (%1$s)</string>
+    <string name="warning_body_milestone">You have watched %1$d short videos today.</string>
+    <string name="warning_body_approaching">You have watched %1$d short videos. You are approaching your daily limit of %2$d videos.</string>
+    <string name="warning_body_reached">Your configured short-video limit of %1$d videos has been reached.</string>
+    <string name="warning_body_after_limit">You have watched %1$d short videos today; your limit was %2$d.</string>
+    <string name="warning_body_time_approaching">You have spent %1$d minutes in short-video apps. Your time limit is %2$d minutes.</string>
+    <string name="warning_body_time_reached">Your configured time limit of %1$d minutes has been reached.</string>
+    <string name="warning_includes_estimates">Some of these counts are estimated.</string>
+
+    <!-- Floating counter -->
+    <string name="counter_loading">▶ …</string>
+    <string name="counter_platform_line">%1$s: %2$s</string>
+    <string name="counter_breakdown">%1$d verified · %2$d estimated</string>
+    <string name="counter_remaining">%1$d left (%2$s)</string>
+    <string name="counter_basis_verified">verified only</string>
+    <string name="counter_basis_all">incl. estimated</string>
+
+    <!-- Block screen -->
+    <string name="block_title">%1$s is paused for today</string>
+    <string name="block_reason_global">Your daily short-video limit has been reached.</string>
+    <string name="block_reason_platform">Your %1$s limit has been reached.</string>
+    <string name="block_resets_at">It unlocks again at %1$s.</string>
+    <string name="block_domain_note">The whole website is paused. Android does not let Reel Counter pause only part of a site.</string>
+    <string name="block_home">Go to home screen</string>
+    <string name="block_open_app">Open Reel Counter</string>
+    <string name="block_override">Allow %1$d more minutes</string>
+    <string name="block_override_limit">You have used all temporary overrides for today.</string>
+    <string name="block_override_unavailable">Temporary overrides are turned off in settings.</string>
+    <string name="block_pause">Emergency: pause blocking for today</string>
+    <string name="block_pause_confirm">Tap again to pause blocking until reset</string>
+    <string name="block_footer">This is a limit you set yourself. Phone, messages and other essential apps are never blocked. You can change limits in Reel Counter, or turn off its accessibility service in Android Settings, at any time.</string>
+</resources>

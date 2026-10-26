@@ -1,0 +1,107 @@
+import type { TodaySummary, TrackerSettings } from '../../src/domain/types';
+
+export function fixtureSettings(): TrackerSettings {
+  return {
+    onboardingCompleted: true,
+    monitoringEnabled: true,
+    warningsEnabled: true,
+    blockingEnabled: false,
+    floatingCounter: 'monitored_apps',
+    resetMinuteOfDay: 0,
+    minViewSeconds: 3,
+    sessionGapMinutes: 5,
+    overrideMinutes: 10,
+    maxOverridesPerDay: 3,
+    retentionDays: 365,
+    theme: 'system',
+    limits: {
+      global: { maxVideos: 50, maxMinutes: null },
+      perPlatform: {},
+      warningMilestones: [25],
+      approachingPercent: 80,
+      repeatEveryVideosAfterLimit: null,
+      enforceEstimatedCounts: false,
+    },
+  };
+}
+
+export function fixtureSummary(): TodaySummary {
+  return {
+    generatedAt: 0,
+    dayKey: '2026-10-26',
+    resetsAt: null,
+    monitoringEnabled: true,
+    permissions: {
+      usageAccess: 'granted',
+      accessibility: 'granted',
+      notifications: 'granted',
+      vpn: 'not_used',
+      overlay: 'granted',
+    },
+    platforms: [
+      {
+        id: 'youtube_shorts',
+        displayName: 'YouTube Shorts',
+        monitoringStatus: 'active',
+        effectiveLevel: 'B',
+        capabilityLevel: 'B',
+        verifiedVideos: 0,
+        estimatedVideos: 9,
+        activeMillis: 900_000,
+        timeSource: 'usage_stats',
+        lastDetectedAt: 1000,
+        enabled: true,
+      },
+      {
+        id: 'brave',
+        displayName: 'Brave (short-video sites)',
+        monitoringStatus: 'active',
+        effectiveLevel: 'A',
+        capabilityLevel: 'A',
+        verifiedVideos: 3,
+        estimatedVideos: 0,
+        activeMillis: null,
+        timeSource: 'web_site_timer',
+        lastDetectedAt: 2000,
+        enabled: true,
+      },
+      {
+        id: 'snapchat_spotlight',
+        displayName: 'Snapchat',
+        monitoringStatus: 'usage_only',
+        effectiveLevel: 'C',
+        capabilityLevel: 'C',
+        verifiedVideos: null,
+        estimatedVideos: null,
+        activeMillis: null,
+        timeSource: 'usage_stats',
+        lastDetectedAt: null,
+        enabled: true,
+      },
+    ],
+    limits: [
+      {
+        scope: 'global',
+        platformId: null,
+        maxVideos: 50,
+        maxMinutes: null,
+        verifiedVideos: 3,
+        estimatedVideos: 9,
+        enforcedVideos: 3,
+        enforcedIncludesEstimates: false,
+        remainingVideos: 47,
+        activeMinutes: 15,
+        videoLimitReached: false,
+        timeLimitReached: false,
+      },
+    ],
+    block: {
+      blockingEnabled: false,
+      triggered: [],
+      enforcedCount: 0,
+      suspension: null,
+      overrideUntil: null,
+      resetsAt: null,
+    },
+  };
+}

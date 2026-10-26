@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Event types are the minimum needed:
+  - windowStateChanged: which app is in the foreground (package name only for unmonitored apps)
+  - viewScrolled: feed transitions in monitored apps
+  - windowContentChanged: address-bar changes in supported browsers (throttled)
+  isAccessibilityTool is false: this app is not an assistive technology.
+-->
+<accessibility-service xmlns:android="http://schemas.android.com/apk/res/android"
+    android:accessibilityEventTypes="typeWindowStateChanged|typeViewScrolled|typeWindowContentChanged"
+    android:accessibilityFeedbackType="feedbackGeneric"
+    android:accessibilityFlags="flagReportViewIds"
+    android:canRetrieveWindowContent="true"
+    android:canPerformGestures="false"
+    android:description="@string/accessibility_service_description"
+    android:isAccessibilityTool="false"
+    android:notificationTimeout="100"
+    android:summary="@string/accessibility_service_label" />

@@ -1,0 +1,59 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  js:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run lint
+      - run: npm run typecheck
+      - run: npm test -- --ci
+
+  core:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+      - name: Kotlin domain tests
+        working-directory: android
+        run: ./gradlew -p core test --no-daemon
+
+  android:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+      - run: npm ci
+      - name: Install NDK
+        run: yes | "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" "ndk;27.1.12297006" > /dev/null
+      - name: Build debug app and instrumented tests
+        working-directory: android
+        run: ./gradlew assembleDebug assembleDebugAndroidTest --no-daemon -PreactNativeArchitectures=x86_64
+      - name: Verify release manifest has no INTERNET permission (removed in src/release)
+        working-directory: android
+        run: |
+          ./gradlew processReleaseMainManifest --no-daemon -PreactNativeArchitectures=x86_64
+          ! grep -q "android.permission.INTERNET" app/build/intermediates/merged_manifest/release/processReleaseMainManifest/AndroidManifest.xml
+      - uses: actions/upload-artifact@v4
+        with:
+          name: app-debug
+          path: android/app/build/outputs/apk/debug/*.apk
