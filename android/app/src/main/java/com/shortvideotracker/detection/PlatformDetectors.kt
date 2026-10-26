@@ -6,6 +6,7 @@ import android.view.accessibility.AccessibilityNodeInfo
 import com.shortvideotracker.core.engine.AddressBarClassification
 import com.shortvideotracker.core.engine.PagerScrollSignal
 import com.shortvideotracker.core.engine.PagerTransitionInterpreter
+import com.shortvideotracker.core.engine.PagerTransitionTracker
 import com.shortvideotracker.core.engine.UrlClassifier
 import com.shortvideotracker.core.engine.VideoObservation
 import com.shortvideotracker.core.model.ConfidenceLevel
@@ -43,6 +44,39 @@ class KnownPagerDetector(override val definition: PlatformDefinition) : Platform
             val position = PagerTransitionInterpreter.settledPosition(signal(event, source, screen), requireFullScreen = true)
                 ?: return null
             return DetectorSignal.Video(observation(definition, position, EvidenceType.PAGER_POSITION_KNOWN_VIEW))
+        } finally {
+            recycle(source)
+        }
+    }
+}
+
+/**
+ * Known pager that reports no positions (YouTube Shorts). Content changes of the pager while it
+ * holds two pages mark a swipe; only the child count and bounds are read.
+ */
+class KnownPagerTransitionDetector(override val definition: PlatformDefinition) : PlatformDetector {
+    private val tracker = PagerTransitionTracker()
+
+    override fun onEvent(event: AccessibilityEvent, rootProvider: () -> AccessibilityNodeInfo?, screen: ScreenSize): DetectorSignal? {
+        val type = event.eventType
+        if (type != AccessibilityEvent.TYPE_WINDOW_CONTENT_CHANGED && type != AccessibilityEvent.TYPE_VIEW_SCROLLED) return null
+        val source = event.source ?: return null
+        try {
+            if (source.viewIdResourceName !in definition.pagerViewIds) return null
+            val bounds = Rect().also { source.getBoundsInScreen(it) }
+            if (screen.height <= 0 || bounds.height() < screen.height * PagerTransitionInterpreter.MIN_FULL_SCREEN_FRACTION) return null
+            val key = tracker.onPagerChanged(source.childCount, System.currentTimeMillis()) ?: return null
+            return DetectorSignal.Video(
+                VideoObservation(
+                    platformId = definition.id,
+                    sourceDetector = definition.detectorType.code,
+                    detectorVersion = definition.detectorVersion,
+                    timestamp = System.currentTimeMillis(),
+                    videoKey = key,
+                    confidence = ConfidenceLevel.B_INFERRED,
+                    evidence = EvidenceType.PAGER_POSITION_KNOWN_VIEW,
+                ),
+            )
         } finally {
             recycle(source)
         }
@@ -117,6 +151,7 @@ class BrowserAddressBarDetector(override val definition: PlatformDefinition) : P
 object DetectorFactory {
     fun create(definition: PlatformDefinition): PlatformDetector? = when (definition.detectorType) {
         DetectorType.KNOWN_PAGER_VIEW -> KnownPagerDetector(definition)
+        DetectorType.KNOWN_PAGER_TRANSITIONS -> KnownPagerTransitionDetector(definition)
         DetectorType.GENERIC_VERTICAL_PAGER -> GenericVerticalPagerDetector(definition)
         DetectorType.BROWSER_ADDRESS_BAR -> BrowserAddressBarDetector(definition)
         DetectorType.USAGE_ONLY -> null

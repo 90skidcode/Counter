@@ -50,7 +50,8 @@ export function DashboardScreen({
   onOpenPermissions: () => void;
 }) {
   const { palette } = useTheme();
-  const { summary, loading, error, refresh } = useTrackerStore();
+  const { summary, loading, error, refresh, settings, updateSettings } =
+    useTrackerStore();
 
   useEffect(() => {
     refresh();
@@ -144,6 +145,24 @@ export function DashboardScreen({
           <KeyValue label={t('dashboard.limit')} value={t('common.noLimit')} />
         )}
       </Card>
+
+      {global &&
+      settings &&
+      !global.enforcedIncludesEstimates &&
+      global.estimatedVideos > 0 ? (
+        <Notice
+          text={t('dashboard.estimatesExcluded', { n: global.estimatedVideos })}
+          action={{
+            title: t('dashboard.countEstimates'),
+            onPress: async () => {
+              await updateSettings({
+                limits: { ...settings.limits, enforceEstimatedCounts: true },
+              });
+              await refresh();
+            },
+          }}
+        />
+      ) : null}
 
       <Card>
         <KeyValue

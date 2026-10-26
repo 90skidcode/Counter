@@ -120,6 +120,8 @@ export const en = {
   'dashboard.remainingBasisVerified': 'Counting verified videos only',
   'dashboard.remainingBasisAll': 'Counting verified and estimated videos',
   'dashboard.limitReached': 'Your daily limit has been reached.',
+  'dashboard.estimatesExcluded': '{n} estimated videos are not counted toward your limit. Most apps only allow estimates.',
+  'dashboard.countEstimates': 'Count estimated videos toward my limit',
   'dashboard.noCounts':
     'Video counts are unavailable until the detection service is on.',
   'dashboard.coverage': 'Detection coverage',

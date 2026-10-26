@@ -78,11 +78,13 @@ class ShortVideoAccessibilityService : AccessibilityService(), TrackingCoordinat
 
     override fun onAccessibilityEvent(event: AccessibilityEvent) {
         val pkg = event.packageName?.toString() ?: return
+        if (DEBUG_SIGNALS && pkg == "com.google.android.youtube") logYouTube(event)
         if (event.eventType == AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED) onWindowChanged(pkg, event)
         if (pkg != foregroundPackage) return
 
         val detector = detectors[pkg] ?: return
         val definition = detector.definition
+        if (DEBUG_SIGNALS && event.eventType == AccessibilityEvent.TYPE_VIEW_SCROLLED) logScroll(event)
         val needsAddressForBlocking = definition.platformType == PlatformType.BROWSER &&
             coordinator.blockState?.enforced?.any { it.target.kind == BlockTargetKind.DOMAIN } == true
         if (!coordinator.isMonitored(definition.id) && !needsAddressForBlocking) return
@@ -157,7 +159,36 @@ class ShortVideoAccessibilityService : AccessibilityService(), TrackingCoordinat
         if (::overlays.isInitialized) overlays.removeAll()
     }
 
+    /** Temporary: logs structural facts of YouTube events (no text or descriptions). */
+    private fun logYouTube(event: AccessibilityEvent) {
+        val src = event.source
+        val bounds = android.graphics.Rect()
+        src?.getBoundsInScreen(bounds)
+        android.util.Log.d(
+            "RCYouTube",
+            "type=${AccessibilityEvent.eventTypeToString(event.eventType)} change=${event.contentChangeTypes} " +
+                "cls=${event.className} srcCls=${src?.className} id=${src?.viewIdResourceName} " +
+                "from=${event.fromIndex} to=${event.toIndex} count=${event.itemCount} " +
+                "children=${src?.childCount} fg=$foregroundPackage bounds=$bounds",
+        )
+    }
+
+    /** Temporary: logs structural scroll facts only (class, view id, indices, bounds). */
+    private fun logScroll(event: AccessibilityEvent) {
+        val src = event.source
+        val bounds = android.graphics.Rect()
+        src?.getBoundsInScreen(bounds)
+        android.util.Log.d(
+            "RCDetect",
+            "pkg=${event.packageName} cls=${event.className} id=${src?.viewIdResourceName} " +
+                "from=${event.fromIndex} to=${event.toIndex} count=${event.itemCount} " +
+                "dy=${event.scrollDeltaY} y=${event.scrollY} maxY=${event.maxScrollY} bounds=$bounds",
+        )
+    }
+
     companion object {
+        private const val DEBUG_SIGNALS = false
+
         /** True while the system has the service bound and connected. */
         @Volatile var isConnected: Boolean = false
             private set

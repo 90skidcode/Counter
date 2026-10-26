@@ -6,6 +6,12 @@ enum class DetectorType(val code: String) {
     /** Accessibility scroll events from a known, named pager view. */
     KNOWN_PAGER_VIEW("known_pager_view"),
 
+    /**
+     * The known pager reports no positions; a swipe is recognised when the pager briefly holds
+     * two pages. Scroll-backs cannot be told apart from new videos.
+     */
+    KNOWN_PAGER_TRANSITIONS("known_pager_transitions"),
+
     /** Accessibility scroll events from any full-screen vertical pager in the app. */
     GENERIC_VERTICAL_PAGER("generic_vertical_pager"),
 
